@@ -152,7 +152,7 @@ def convert_uuids(obj: Any) -> Any:
     if isinstance(obj, uuid.UUID):
         return str(obj)
 
-    if isinstance(obj, list):
+    if isinstance(obj, List):
         return [convert_uuids(el) for el in obj]
 
     if isinstance(obj, dict):
@@ -185,7 +185,7 @@ class ImportExportMixin:
     __mapper__: Mapper
 
     @classmethod
-    def _unique_constraints(cls) -> list[set[str]]:
+    def _unique_constraints(cls) -> List[Set[str]]:
         """Get all (single column and multi column) unique constraints"""
         unique = [
             {c.name for c in u.columns}
@@ -246,7 +246,7 @@ class ImportExportMixin:
         dict_rep: Dict[Any, Any],
         parent: Optional[Any] = None,
         recursive: bool = True,
-        sync: Optional[list[str]] = None,
+        sync: Optional[List[str]] = None,
         allow_reparenting: bool = False,
     ) -> Any:
         """Import obj from a dictionary"""
@@ -265,7 +265,7 @@ class ImportExportMixin:
         filters = []  # Using these filters to check if obj already exists
 
         # Remove fields that should not get imported
-        for k in list(dict_rep):
+        for k in List(dict_rep):
             if k not in export_fields and k not in parent_refs:
                 del dict_rep[k]
 
@@ -651,7 +651,7 @@ def clone_model(
     primary_keys = table.primary_key.columns.keys()
     data = {
         attr: getattr(target, attr)
-        for attr in list(table.columns.keys()) + (keep_relations or [])
+        for attr in List(table.columns.keys()) + (keep_relations or [])
         if attr not in primary_keys and attr not in ignore
     }
     data.update(kwargs)
@@ -1150,13 +1150,13 @@ class ExploreMixin:  # pylint: disable=too-many-public-methods
                 return utils.cast_to_boolean(value)
             return value
 
-        if isinstance(values, (list, tuple)):
+        if isinstance(values, (List, Tuple)):
             values = [handle_single_value(v) for v in values]  # type: ignore
         else:
             values = handle_single_value(values)
-        if is_list_target and not isinstance(values, (tuple, list)):
+        if is_list_target and not isinstance(values, (Tuple, List)):
             values = [values]  # type: ignore
-        elif not is_list_target and isinstance(values, (tuple, list)):
+        elif not is_list_target and isinstance(values, (Tuple, List)):
             values = values[0] if values else None
         return values
 
@@ -1407,7 +1407,7 @@ class ExploreMixin:  # pylint: disable=too-many-public-methods
         template_kwargs["removed_filters"] = removed_filters
         template_kwargs["applied_filters"] = applied_template_filters
         template_processor = self.get_template_processor(**template_kwargs)
-        prequeries: list[str] = []
+        prequeries: List[str] = []
         orderby = orderby or []
         need_groupby = bool(metrics is not None or groupby)
         metrics = metrics or []
@@ -1747,7 +1747,7 @@ class ExploreMixin:  # pylint: disable=too-many-public-methods
                         )
                     )
                 elif is_list_target:
-                    assert isinstance(eq, (tuple, list))
+                    assert isinstance(eq, (Tuple, List))
                     if len(eq) == 0:
                         raise QueryObjectValidationError(
                             _("Filter value list cannot be empty")
